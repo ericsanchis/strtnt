@@ -1,0 +1,234 @@
+.\" Copyright (C) 2022 Eric Sanchis (eric.sanchis@iut-rodez.fr)
+.\"
+.\" %%%LICENSE_START(VERBATIM)
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one.
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" %%%LICENSE_END
+.\"
+.\"
+.TH STRSNTCPY 3S  2022-08-07 "GNU" "-"
+.SH NAME
+strsntcpy, strstcpy - size-bounded sub-string copy
+.SH SYNOPSIS
+.nf
+.B #include \N'34'strtnt.h\N'34' 
+.PP
+.BI "int strsntcpy(char *" dst ", size_t " dstsize ", const char *" src ", size_t " nb );
+.PP
+.BI "int strstcpy(char *" dst ", size_t " dstsize ", const char *" src ", size_t " nb );
+.fi
+.SH DESCRIPTION
+The
+.BR strsntcpy ()
+and
+.BR strstcpy()
+functions copy up to the first (not null) 
+.IR nb 
+characters from the source string pointed to by 
+.IR src 
+to the destination array pointed to by 
+.IR dst 
+and add a terminating null byte (\(aq\\0\(aq). 
+The parameter 
+.IR dstsize 
+indicates the size of the destination array 
+.IR dst .
+.PP
+The
+.BR strstcpy ()
+function specifies that truncation is allowed. When truncation is not allowed, the
+.BR strsntcpy ()
+function should be used.
+.PP
+Let 
+.I srclen 
+the length of the string pointed to by 
+.IR src 
+and 
+.I m 
+= min(
+.I srclen 
+,
+.IR nb
+). 
+If 
+.I m 
+is less than 
+.IR dstsize , 
+the 
+.BR strsntcpy() 
+and 
+.BR strstcpy() 
+functions only write 
+.I m 
+characters of 
+.IR src 
+and an additional null byte to 
+.IR dst .
+They do not pad the remainder of 
+.IR dst 
+with null bytes.
+.PP
+When 
+.IR dstsize 
+<= 
+.I m , 
+the 
+.BR strsntcpy() 
+function returns the error code ETRUNC and the destination buffer 
+.IR dst 
+remains unchanged. 
+The 
+.BR strstcpy() 
+function copies 
+.IR dstsize
+- 1 characters and the string is terminated with a null byte. The return value is OTRUNC.
+.PP
+The 
+.BR strsntcpy() 
+and 
+.BR strstcpy() 
+functions store a well-formed string (i.e. a string with a terminating null byte) into the buffer pointed to by 
+.IR dst 
+or leave this buffer unchanged.
+.PP
+The destination buffer pointed to by
+.IR dst 
+remains unchanged if one of these conditions is realized:
+.IP * 2
+.IR dst
+is a NULL pointer.
+.IP * 2
+.IR dstsize 
+is equal to 0.
+.IP * 2 
+.IR  src 
+is a NULL pointer.
+.IP * 2 
+.I m
+is equal to 0.
+.IP * 2 
+The 
+.BR strsntcpy() 
+function is used and 
+.IR dstsize
+<= 
+.I m . 
+.PP
+The behavior of the 
+.BR strsntcpy() 
+and 
+.BR strstcpy() 
+functions is undefined if:
+.IP * 2
+.IR dst 
+and 
+.IR src 
+overlap.
+.IP * 2 
+.IR dstsize 
+is different to 0 and does not correspond to the actual size of the destination buffer pointed to by
+.IR dst .
+.IP * 2 
+.IR src 
+is a bad-formed string (i.e. a string without a terminating null byte).
+.SH RETURN VALUE
+These functions return:
+.IP * 2
+A non negative integer after success:
+.TP
+.in +4
+.B ONOTRUNC
+.in +6
+No truncation was done during the copy: 
+.BR strstcpy() , 
+.BR strsntcpy() .
+.TP
+.in +4 
+.B OTRUNC
+.in +6
+An allowed truncation was done during the copy: 
+.BR strstcpy() .
+.IP * 2
+A negative integer after error:
+.TP
+.in +4
+.B EDSTNUL
+.in +6
+.IR dst
+is a NULL pointer: 
+.BR strstcpy() ,
+.BR strsntcpy() .
+.TP
+.in +4
+.B EDSTZ0
+.in +6
+.IR dstsize
+is equal to 0: 
+.BR strstcpy() , 
+.BR strsntcpy() .
+.TP
+.in +4
+.B ESRCNUL 
+.in +6
+.IR src 
+is a NULL pointer: 
+.BR strstcpy() , 
+.BR strsntcpy() .
+.TP
+.in +4
+.B ETRUNC
+.in +6 
+.IR dstzise 
+is too small and truncation is not allowed: 
+.BR strsntcpy() .
+.SH PORTABILITY
+The
+.BR strsntcpy()
+and
+.BR strstcpy()
+functions conform to C89.
+.SH NOTES
+These functions are designed to replace the 
+.BR strncpy()
+and
+.BR strncpy_s() 
+functions. They are easier to use, more robust, more consistent and less error prone.
+.PP
+To copy the first n bytes of the string src with an allowed truncation:
+.PP
+.in +4
+.nf
+	char dst[DSTSIZE] ;
+	int r ;
+	
+    if ( (r = strstcpy(dst,sizeof(dst),src,n)) < 0 )
+      {  /* error processing */ }
+.fi
+.SH AUTHOR
+Written by Eric Sanchis (eric.sanchis@netc.fr)
+.SH COPYRIGHT
+Copyright © 2022 Eric Sanchis.
+.P
+This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE, to the extent permitted by law. 
+.SH SEE ALSO
+.BR strntcpy() ,
+.BR strtcpy() .
+

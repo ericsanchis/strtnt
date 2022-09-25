@@ -1,0 +1,210 @@
+.\" Copyright (C) 2022 Eric Sanchis (eric.sanchis@iut-rodez.fr)
+.\"
+.\" %%%LICENSE_START(VERBATIM)
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one.
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" %%%LICENSE_END
+.\"
+.\"
+.TH STRNTCAT 3S  2022-08-18 "GNU" "-"
+.SH NAME
+strntcat, strtcat - size-bounded string concatenation
+.SH SYNOPSIS
+.nf
+.B #include \N'34'strtnt.h\N'34' 
+.PP
+.BI "int strntcat(char *" dst ", size_t " dstsize ", const char *" src );
+.PP
+.BI "int strtcat(char *" dst ", size_t " dstsize ", const char *" src );
+.fi
+.SH DESCRIPTION
+The
+.BR strntcat()
+and
+.BR strtcat()
+functions append the string pointed to by
+.IR src 
+to the  array  pointed to by
+.IR dst ,
+overwriting its terminating null byte (\(aq\\0\(aq), then add a terminating null byte. The full size of the destination buffer
+.IR dst 
+is
+.IR dstsize .
+.PP
+The
+.BR strtcat()
+function specifies that truncation is allowed. When truncation is not allowed, the
+.BR strntcat()
+function should be used.
+.PP
+Concatenation is actually made if the remaining size of the destination buffer pointed to by
+.IR dst 
+is large enough or the 
+.BR strtcat()
+function is chosen. When the remaining size is too small and the 
+.BR strtcat()
+function is chosen, only 
+.IR dstsize - strlen(dst)  - 1
+characters of
+.IR src
+are appened and a terminating null byte is added. After concatenation, the final string pointed to by
+.IR dst
+is always terminated with a null byte and its length is not more than
+.IR dstsize - 1 .
+.PP
+The 
+.BR strntcat() 
+and 
+.BR strtcat() 
+functions store a well-formed string (i.e. a string with a terminating null byte) into the buffer pointed to by 
+.IR dst 
+or leave this buffer unchanged.
+.PP
+The destination buffer pointed to by
+.IR dst 
+remains unchanged if one of these conditions is realized:
+.IP * 2
+.IR dst
+is a NULL pointer or the buffer pointed to by
+.IR dst
+contains a bad-formed string (i.e. a string without a terminating null byte).
+.IP * 2
+.IR dstsize 
+is equal to 0.
+.IP * 2 
+.IR  src 
+is a NULL pointer or the length of the string pointed to by 
+.IR src
+is equal to 0.
+.IP * 2 
+The 
+.BR strntcat() 
+function is used and the remaining size in the destination buffer pointed to by 
+.IR dst
+is too small.
+.PP
+The behavior of the 
+.BR strntcat() 
+and 
+.BR strtcat() 
+functions is undefined if:
+.IP * 2
+.IR dst 
+and 
+.IR src 
+overlap.
+.IP * 2 
+.IR dstsize 
+is different to 0 and does not correspond to the actual size of the destination buffer pointed to by 
+.IR dst .
+.IP * 2 
+.IR src 
+is a bad-formed string.
+.SH RETURN VALUE
+These functions return:
+.IP * 2
+A non negative integer after success:
+.TP
+.in +4
+.B ONOTRUNC
+.in +6
+No truncation was done during the concatenation: 
+.BR strtcat() , 
+.BR strntcat() .
+.TP
+.in +4 
+.B OTRUNC
+.in +6
+An allowed truncation was done during the concatenation: 
+.BR strtcat() .
+.IP * 2
+A negative integer after error:
+.TP
+.in +4
+.B EDSTNUL
+.in +6
+.IR dst
+is a NULL pointer: 
+.BR strtcat() ,
+.BR strntcat() .
+.TP
+.in +4
+.B EDSTSZ0
+.in +6
+.IR dstsize
+is equal to 0: 
+.BR strtcat() , 
+.BR strntcat() .
+.TP
+.in +4
+.B EDSTBF
+.in +6
+.IR dst
+is a bad-formed string:
+.BR strtcat() ,
+.BR strntcat() .
+.TP
+.in +4
+.B ESRCNUL 
+.in +6
+.IR src 
+is a NULL pointer: 
+.BR strtcat() , 
+.BR strntcat() .
+.TP
+.in +4
+.B ETRUNC
+.in +6 
+.IR dstzise 
+is too small and truncation is not allowed: 
+.BR strntcat() .
+.SH PORTABILITY
+The
+.BR strntcat()
+and
+.BR strtcat()
+functions conform to C89.
+.SH NOTES
+These functions are designed to be an alternative to the
+.BR strcat()
+function and to replace the 
+.BR strlcat() 
+and 
+.BR strcat_s() 
+functions. They are easier to use, more robust, more consistent and less error prone.
+.PP
+They provide enough information to process an error condition:
+.PP
+.in +4
+.nf
+  /* Truncation is allowed */
+  if ( (ret = strtcat(dst,dstsize,src)) < 0 )  
+     process_error(ret) ;
+.fi
+.SH AUTHOR
+Written by Eric Sanchis (eric.sanchis@netc.fr)
+.SH COPYRIGHT
+Copyright © 2022 Eric Sanchis.
+.P
+This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE, to the extent permitted by law. 
+.SH SEE ALSO
+.BR strsntcat() ,
+.BR strstcat() .
+
