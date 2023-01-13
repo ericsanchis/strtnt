@@ -1,0 +1,95 @@
+STRNTCPY(3S)                           -                          STRNTCPY(3S)
+
+NAME
+       strntcpy, strtcpy - size-bounded string copy
+
+SYNOPSIS
+       #include "strtnt.h"
+
+       int strntcpy(char *dst, size_t dstsize, const char *src);
+
+       int strtcpy(char *dst, size_t dstsize, const char *src);
+
+DESCRIPTION
+       The  strntcpy()  and  strtcpy() functions copy the string pointed to by
+       src, including the terminating null byte ('\0'), to the  array  pointed
+       to by dst.  The full size of the destination buffer dst is dstsize.
+
+       The strtcpy() function specifies that truncation is allowed. When trun‐
+       cation is not allowed, the strntcpy() function should be used.
+
+       If srclen is the length of the string pointed to by src  and  srclen  <
+       dstsize, these functions only write the srclen characters of src and an
+       additional null byte to dst.
+
+       When srclen >= dstsize, the strtcpy() function only writes dstsize -  1
+       characters of src and add a null byte to dst.
+
+       The strntcpy() and strtcpy() functions store a well-formed string (i.e.
+       a string with a terminating null byte) into the buffer  pointed  to  by
+       dst or leave this buffer unchanged.
+
+       The  destination  buffer  pointed to by dst remains unchanged if one of
+       these conditions is realized:
+
+       * dst is a NULL pointer.
+
+       * dstsize is equal to 0.
+
+       * src is a NULL pointer.
+
+       * The strntcpy() function is used and dstsize is too small.
+
+       The behavior of the strntcpy() and strtcpy() functions is undefined if:
+
+       * dst and src overlap.
+
+       * dstsize is different to 0 and does not correspond to the actual  size
+         of the destination buffer pointed to by dst.
+
+       * src  is a bad-formed string (i.e. a string without a terminating null
+         byte).
+
+RETURN VALUE
+       These functions return:
+
+       * A non negative integer after success:
+
+           ONOTRUNC
+               No truncation was done during the copy: strtcpy(), strntcpy().
+
+           OTRUNC
+               An allowed truncation was done during the copy: strtcpy().
+
+       * A negative integer after error:
+
+           EDSTNUL
+               dst is a NULL pointer: strtcpy(), strntcpy().
+
+           EDSTZ0
+               dstsize is equal to 0: strtcpy(), strntcpy().
+
+           ESRCNUL
+               src is a NULL pointer: strtcpy(), strntcpy().
+
+           ETRUNC
+               dstzise is too small and truncation is not allowed: strntcpy().
+
+PORTABILITY
+       The strntcpy() and strtcpy() functions conform to C89.
+
+NOTES
+       These functions are designed to be an alternative to the strcpy() func‐
+       tion  and  to  replace the strlcpy() and strcpy_s() functions. They are
+       easier to use, more robust, more consistent and less error prone.
+
+       They provide enough information to process an error condition:
+
+             /* Truncation is not allowed */
+             if ( (ret = strntcpy(dst,dstsize,src)) < 0 )
+                process_error(ret) ;
+
+SEE ALSO
+       strsntcpy(), strstcpy().
+
+GNU                               2022-08-07                      STRNTCPY(3S)

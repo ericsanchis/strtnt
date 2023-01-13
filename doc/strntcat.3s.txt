@@ -1,0 +1,88 @@
+STRNTCAT(3S)                                                                       -                                                                       STRNTCAT(3S)
+
+NAME
+       strntcat, strtcat - size-bounded string concatenation
+
+SYNOPSIS
+       #include "strtnt.h"
+
+       int strntcat(char *dst, size_t dstsize, const char *src);
+
+       int strtcat(char *dst, size_t dstsize, const char *src);
+
+DESCRIPTION
+       The  strntcat() and strtcat() functions append the string pointed to by src to the  array  pointed to by dst, overwriting its terminating null byte ('\0'), then
+       add a terminating null byte. The full size of the destination buffer dst is dstsize.
+
+       The strtcat() function specifies that truncation is allowed. When truncation is not allowed, the strntcat() function should be used.
+
+       Concatenation is actually made if the remaining size of the destination buffer pointed to by dst is large enough or the strtcat() function is chosen.  When  the
+       remaining size is too small and the strtcat() function is chosen, only dstsize-strlen(dst)-1 characters of src are appened and a terminating null byte is added.
+       After concatenation, the final string pointed to by dst is always terminated with a null byte and its length is not more than dstsize-1.
+
+       The strntcat() and strtcat() functions store a well-formed string (i.e. a string with a terminating null byte) into the buffer pointed to by dst or  leave  this
+       buffer unchanged.
+
+       The destination buffer pointed to by dst remains unchanged if one of these conditions is realized:
+
+       * dst is a NULL pointer or the buffer pointed to by dst contains a bad-formed string (i.e. a string without a terminating null byte).
+
+       * dstsize is equal to 0.
+
+       * src is a NULL pointer or the length of the string pointed to by src is equal to 0.
+
+       * The strntcat() function is used and the remaining size in the destination buffer pointed to by dst is too small.
+
+       The behavior of the strntcat() and strtcat() functions is undefined if:
+
+       * dst and src overlap.
+
+       * dstsize is different to 0 and does not correspond to the actual size of the destination buffer pointed to by dst.
+
+       * src is a bad-formed string.
+
+RETURN VALUE
+       These functions return:
+
+       * A non negative integer after success:
+
+           ONOTRUNC
+               No truncation was done during the concatenation: strtcat(), strntcat().
+
+           OTRUNC
+               An allowed truncation was done during the concatenation: strtcat().
+
+       * A negative integer after error:
+
+           EDSTNUL
+               dst is a NULL pointer: strtcat(), strntcat().
+
+           EDSTSZ0
+               dstsize is equal to 0: strtcat(), strntcat().
+
+           EDSTBF
+               dst is a bad-formed string: strtcat(), strntcat().
+
+           ESRCNUL
+               src is a NULL pointer: strtcat(), strntcat().
+
+           ETRUNC
+               dstzise is too small and truncation is not allowed: strntcat().
+
+PORTABILITY
+       The strntcat() and strtcat() functions conform to C89.
+
+NOTES
+       These  functions  are designed to be an alternative to the strcat() function and to replace the strlcat() and strcat_s() functions. They are easier to use, more
+       robust, more consistent and less error prone.
+
+       They provide enough information to process an error condition:
+
+             /* Truncation is allowed */
+             if ( (ret = strtcat(dst,dstsize,src)) < 0 )
+                process_error(ret) ;
+
+SEE ALSO
+       strsntcat(), strstcat().
+
+GNU                                                                            2022-08-18                                                                  STRNTCAT(3S)
