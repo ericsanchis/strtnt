@@ -33,7 +33,7 @@ DESCRIPTION
 
        * src is a NULL pointer.
 
-       * m is equal to 0.
+       * nb is equal to 0.
 
        * The strsntcpy() function is used and dstsize <= m .
 
@@ -87,4 +87,4 @@ NOTES
 SEE ALSO
        strntcpy(), strtcpy().
 
-GNU                                                                            2022-08-07                                                                 STRSNTCPY(3S)
+GNU                                                                            2023-01-27                                                                 STRSNTCPY(3S)

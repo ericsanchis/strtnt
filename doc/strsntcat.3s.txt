@@ -35,7 +35,9 @@ DESCRIPTION
 
        * src is a NULL pointer.
 
-       * m is equal to 0.
+       * nb is equal to 0.
+
+       * srclen is equal to 0.
 
        * The strsntcat() function is used and dstlen + m >= dstsize.
 
@@ -91,4 +93,4 @@ NOTES
 SEE ALSO
        strntcat(), strtcat().
 
-GNU                                                                            2022-08-18                                                                 STRSNTCAT(3S)
+GNU                                                                            2023-01-27                                                                 STRSNTCAT(3S)

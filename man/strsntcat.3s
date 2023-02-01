@@ -23,7 +23,7 @@
 .\" %%%LICENSE_END
 .\"
 .\"
-.TH STRSNTCAT 3S  2022-08-18 "GNU" "-"
+.TH STRSNTCAT 3S  2023-01-27 "GNU" "-"
 .SH NAME
 strsntcat, strstcat - size-bounded sub-string concatenation
 .SH SYNOPSIS
@@ -129,7 +129,10 @@ is equal to 0.
 .IR  src 
 is a NULL pointer.
 .IP * 2 
-.I m
+.I nb
+is equal to 0.
+.IP * 2 
+.I srclen
 is equal to 0.
 .IP * 2 
 The 
